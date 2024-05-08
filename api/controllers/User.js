@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt"
 import User from "../models/User.js";
+import Listing from "../models/Listing.js";
 
 export const test = (req, res) => {
     res.send("Hi from the server");
@@ -26,5 +27,15 @@ export const updateUser = async (req, res) => {
             success: true,
             message: "User updated successfully"
         })
+    }
+}
+
+export const getListings = async (req, res) => {
+    if (req.user._id.toHexString() === req.params.id) {
+        const data = await Listing.find({ userRef: req.params.id });
+        res.json(data)
+    }
+    else {
+        res.send("You can only see your listings")
     }
 }

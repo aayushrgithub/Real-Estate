@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { deleteUser } from '../redux/UserSlice'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { useEffect } from 'react'
+import { addData } from '../redux/SearchSlice'
 
 
 const Header = () => {
     const [refresh, setRefresh] = useState(false);
     const currentUser = useSelector(store => store.user);
+    const [searchTerm, setSearchTerm] = useState('');
     const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const handleLogout = async () => {
         dispatch(deleteUser(null));
@@ -18,13 +22,20 @@ const Header = () => {
         toast.success(data.message)
         setRefresh(!refresh);
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        dispatch(addData(searchTerm));
+    }
+
     return (
         <div className='bg-slate-200 shadow-md'>
             <div className='flex justify-between max-w-[70%] mx-auto p-3 items-center'>
                 <h1 className='font-bold text-lg'>AR-Estate</h1>
-                <form className='flex items-center bg-slate-100 rounded-lg p-2'>
-                    <input className='bg-transparent focus:outline-none' type='text' placeholder='Search...' />
-                    <FaSearch />
+                <form onSubmit={handleSubmit} className='flex items-center bg-slate-100 rounded-lg p-2'>
+                    <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className='bg-transparent focus:outline-none' type='text' placeholder='Search...' />
+                    <button><FaSearch /></button>
+
                 </form>
                 <ul className='flex gap-7'>
                     <Link to="/"><li>Home</li></Link>
